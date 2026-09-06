@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ServicePilot</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app">
+  <div class="sidebar">
+    <div class="side-brand">
+      <span class="mark">SP</span>
+      <span class="name">ServicePilot</span>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Workspace</div>
+      <div class="nav-item active" data-page="orders" onclick="switchPage('orders')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>
+        <span class="label-text">Work Orders</span>
+        <span class="badge-count" id="navCount">0</span>
+      </div>
+      <div class="nav-item" data-page="calendar" onclick="switchPage('calendar')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+        <span class="label-text">Calendar</span>
+        <span class="badge-count" id="navCalCount">0</span>
+      </div>
+      <div class="nav-item" data-page="invoices" onclick="switchPage('invoices')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l5 5v13a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1z"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+        <span class="label-text">Invoices</span>
+        <span class="badge-count" id="navInvoiceCount">0</span>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Account</div>
+      <div class="nav-item disabled">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        <span class="label-text">Settings</span>
+        <span class="soon">Soon</span>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">v0.2 — local</div>
+  </div>
+
+  <div class="main-pane">
+    <div class="page-view" id="ordersPage">
+      <div class="topbar">
+        <h1>Work Orders<span class="count-pill" id="topCount"></span></h1>
+        <div class="topbar-actions">
+          <button class="select-btn" id="selectToggleBtn" onclick="toggleSelectMode()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><polyline points="8 12 11 15 16 9"/></svg>
+            Select
+          </button>
+          <button class="new-btn" onclick="openPanel()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Work Order
+            <span class="kbd">⌘N</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="filter-row" id="filterRow"></div>
+      <div class="bulk-bar" id="bulkBar"></div>
+
+      <div class="list-scroll">
+        <div class="ticket-list" id="ticketList"></div>
+      </div>
+    </div>
+
+    <div class="page-view hidden" id="calendarPage">
+      <div class="topbar">
+        <h1>Calendar</h1>
+        <div class="cal-nav">
+          <button class="cal-nav-btn" onclick="calPrevMonth()" aria-label="Previous month">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <span class="cal-month-label" id="calMonthLabel"></span>
+          <button class="cal-nav-btn" onclick="calNextMonth()" aria-label="Next month">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+          <button class="select-btn" onclick="calGoToday()">Today</button>
+        </div>
+      </div>
+
+      <div class="cal-scroll">
+        <div class="cal-weekday-row">
+          <div class="cal-weekday">Sun</div><div class="cal-weekday">Mon</div><div class="cal-weekday">Tue</div>
+          <div class="cal-weekday">Wed</div><div class="cal-weekday">Thu</div><div class="cal-weekday">Fri</div>
+          <div class="cal-weekday">Sat</div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="cal-agenda" id="calAgenda"></div>
+      </div>
+    </div>
+
+    <div class="page-view hidden" id="invoicesPage">
+      <div class="topbar">
+        <h1>Invoices<span class="count-pill" id="invoiceTopCount"></span></h1>
+        <button class="new-btn" onclick="openInvoicePanel()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Invoice
+        </button>
+      </div>
+      <div class="list-scroll">
+        <div class="ticket-list" id="invoiceList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="panel">
+  <div class="panel-header">
+    <button class="back-btn" onclick="closePanel()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div>
+      <div class="label" id="panelLabel">New Ticket</div>
+      <div class="panel-title" id="panelTitle">Create Work Order</div>
+    </div>
+  </div>
+
+  <div class="panel-body">
+    <div class="pdf-upload-box" id="pdfUploadSection">
+      <svg class="pdf-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="12" y2="11"/></svg>
+      <div class="pdf-upload-text">
+        <div class="title">Upload a work order PDF</div>
+        <div class="subtitle">Auto-fill this form from a scanned or emailed PDF</div>
+      </div>
+      <span class="pdf-upload-tag">Soon</span>
+    </div>
+    <div class="form-divider" id="formDivider"><span>or enter manually</span></div>
+
+    <div class="field">
+      <label>Status</label>
+      <div class="status-row" id="statusRow"></div>
+    </div>
+
+    <div class="field">
+      <label>Customer name</label>
+      <input type="text" id="f-customer" placeholder="e.g. Maria Chen">
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Phone</label>
+        <input type="text" id="f-phone" placeholder="(801) 555-0192">
+      </div>
+      <div class="field">
+        <label>Priority</label>
+        <select id="f-priority">
+          <option value="low">Low</option>
+          <option value="normal" selected>Normal</option>
+          <option value="high">High</option>
+          <option value="urgent">Urgent</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Address</label>
+      <input type="text" id="f-address" placeholder="123 Willow St, Unit 4">
+    </div>
+
+    <div class="field">
+      <label>Description</label>
+      <textarea id="f-description" placeholder="What needs to be done..."></textarea>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Creation date</label>
+        <input type="text" id="f-created" disabled>
+      </div>
+      <div class="field">
+        <label>Appointment scheduled</label>
+        <input type="date" id="f-appointment">
+      </div>
+    </div>
+    <div class="field-hint">Optional. Add a date and this ticket is marked Scheduled and will show up on the calendar.</div>
+
+    <button class="bill-job-btn" id="billJobBtn" style="display:none;" onclick="billThisJob()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h9l5 5v13a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1z"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+      Generate invoice for this job
+    </button>
+  </div>
+
+  <div class="panel-footer">
+    <button class="btn btn-danger" id="deleteBtn" onclick="deleteTicket()" style="display:none;">Delete</button>
+    <button class="btn btn-primary" onclick="saveTicket()">Save Work Order</button>
+  </div>
+</div>
+
+<div class="panel" id="invoicePanel">
+  <div class="panel-header">
+    <button class="back-btn" onclick="closeInvoicePanel()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div>
+      <div class="label" id="invoicePanelLabel">New Invoice</div>
+      <div class="panel-title">Build Invoice</div>
+    </div>
+  </div>
+
+  <div class="panel-body" id="invoicePanelBody">
+    <div class="inv-linked-tag" id="invLinkedTag" style="display:none;"></div>
+
+    <div class="inv-section">
+      <div class="inv-section-title">Job &amp; customer</div>
+      <div class="field">
+        <label>Customer name</label>
+        <input type="text" id="inv-custName" placeholder="Maria Chen">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Customer email</label>
+          <input type="email" id="inv-custEmail" placeholder="name@email.com">
+        </div>
+        <div class="field">
+          <label>Job address</label>
+          <input type="text" id="inv-jobAddress" placeholder="412 Willow St, Unit 4">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Invoice date</label>
+          <input type="date" id="inv-woDate">
+        </div>
+        <div class="field">
+          <label>Payment due</label>
+          <input type="date" id="inv-dueDate">
+        </div>
+      </div>
+    </div>
+
+    <div class="inv-section">
+      <div class="inv-section-title">Labor <span class="inv-required-tag">Required</span></div>
+      <div class="field">
+        <label>Explanation of work done</label>
+        <textarea id="inv-laborDesc" placeholder="Replaced toilet fill valve, diagnosed and fixed sprinkler leak..."></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Hours</label>
+          <input type="number" id="inv-laborHours" min="0" step="0.25" value="1">
+        </div>
+        <div class="field">
+          <label>Rate ($/hr)</label>
+          <input type="number" id="inv-laborRate" min="0" step="0.01" value="25.00">
+        </div>
+      </div>
+    </div>
+
+    <div class="inv-section">
+      <div class="inv-section-title">Items purchased</div>
+      <div id="invItemsContainer"></div>
+      <button class="add-item-btn" id="invAddItemBtn" type="button">+ Add item</button>
+    </div>
+
+    <div class="inv-section">
+      <div class="inv-section-title">Notes / terms</div>
+      <div class="field">
+        <textarea id="inv-notes" placeholder="Any notes for the customer..."></textarea>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="invGenerateBtn" type="button" style="margin-bottom: 18px;">Generate invoice</button>
+
+    <div class="inv-receipt-wrap" id="invReceiptWrap" style="display:none;">
+      <div class="inv-receipt" id="invReceipt"></div>
+      <div class="inv-receipt-tear"></div>
+      <div class="inv-receipt-actions">
+        <button class="btn select-btn" id="invCopyBtn" type="button">Copy for Sheets</button>
+        <button class="btn select-btn" id="invPrintBtn" type="button">Print / Save PDF</button>
+      </div>
+      <div class="inv-copy-flash" id="invCopyFlash">Copied — paste into cell A1.</div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
