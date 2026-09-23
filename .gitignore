@@ -1,0 +1,18 @@
+# macOS
+.DS_Store
+
+# Editors / IDEs
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+.env
+
+# Real work orders (client data) - keep local only
+*.pdf
+backend/pdfs/
+backend/images/
