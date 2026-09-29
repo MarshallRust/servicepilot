@@ -11,8 +11,9 @@ def main():
 
     for filename in os.listdir(input_folder):
         if filename.lower().endswith('.pdf'):
-            image = pdf_to_image(filename, input_folder, output_folder)
-            text = run_pytesseract(image)
+            pages = pdf_to_image(filename, input_folder, output_folder)
+            for page in pages:
+                text = run_pytesseract(page)
             # data_to_text()
 
     """

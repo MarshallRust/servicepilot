@@ -75,7 +75,7 @@
   function nextDays(days) {
     const d = new Date();
     d.setDate(d.getDate() + days);
-    return d.toISOString().split('T')[0];
+    return dateKey(d);
   }
 
   function cryptoId() {
@@ -176,7 +176,7 @@
       const hasAppt = !!w.appointmentDate;
       const dateHtml = hasAppt
         ? `<div class="ticket-date scheduled" title="Appointment: ${formatDate(w.appointmentDate)}">${ICON_CAL}${formatDate(w.appointmentDate)}</div>`
-        : `<div class="ticket-date" title="Created ${formatCreated(w.created)}">${formatDate(w.created ? new Date(w.created).toISOString().split('T')[0] : '')}</div>`;
+        : `<div class="ticket-date" title="Created ${formatCreated(w.created)}">${formatDate(w.created ? dateKey(new Date(w.created)) : '')}</div>`;
 
       const isSelected = selectedIds.has(w.id);
       return `
@@ -804,8 +804,8 @@
       document.getElementById('inv-custName').value = fromWorkOrder ? (fromWorkOrder.customer || '') : '';
       document.getElementById('inv-custEmail').value = '';
       document.getElementById('inv-jobAddress').value = fromWorkOrder ? (fromWorkOrder.address || '') : '';
-      document.getElementById('inv-woDate').value = today.toISOString().slice(0, 10);
-      document.getElementById('inv-dueDate').value = due.toISOString().slice(0, 10);
+      document.getElementById('inv-woDate').value = dateKey(today);
+      document.getElementById('inv-dueDate').value = dateKey(due);
       document.getElementById('inv-laborDesc').value = '';
       document.getElementById('inv-laborHours').value = 1;
       document.getElementById('inv-laborRate').value = 25.00;
@@ -958,7 +958,7 @@
         <div class="ticket-meta">
           <span class="badge status-done">${invFmtMoney(inv.total)}</span>
         </div>
-        <div class="ticket-date">${formatDate(new Date(inv.created).toISOString().split('T')[0])}</div>
+        <div class="ticket-date">${formatDate(dateKey(new Date(inv.created)))}</div>
       </div>
     `).join('');
   }

@@ -17,7 +17,10 @@ def pdf_to_image(filename, input_folder, output_folder):
                     
             page.save(image_path, 'JPEG')
             print(f" Saved: {image_name}")
+
+        return pages
                     
     except Exception as e:
         print(f"Error processing {filename}: {e}")
+        return []
 
